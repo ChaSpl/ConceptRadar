@@ -340,6 +340,24 @@ The key insight in V3: adding **Structural Surprise** (measuring how rare specif
 
 ---
 
+## 🗺️ Roadmap — From Beta to Production
+
+ConceptRadar is currently in **beta** — a fully functional system with 280+ scored concepts, but designed from the ground up to scale. The architecture (modular agents, SQLite → PostgreSQL-ready schema, rolling refresh, rate limiting) was built with production in mind.
+
+### Security & Trust
+- [ ] **Input hardening** — Extend prompt injection protection from the chatbot (already protected via skill boundaries) to all input fields (Scout, Add Source, Idea Sandbox) using structured output schemas and input sanitization
+- [ ] **Agent drift control** — Integrate Google ADK Evaluation framework and Callbacks to monitor agent behavior over time, detect scoring drift, and flag anomalous classifications
+- [ ] **Observability** — Google Cloud Operations (Logging, Tracing, Monitoring) for full audit trails of every agent decision — what was scored, why, and how it changed
+
+### Scalability
+- [ ] **Database migration** — SQLite → PostgreSQL/Cloud SQL for concurrent access and production workloads
+- [ ] **Google Cloud Run deployment** — Containerized deployment with auto-scaling
+
+### Scoring & Intelligence
+- [ ] **Validation score enrichment** — Currently source-type-dominant, causing horizontal banding on the radar. Improvement planned
+
+---
+
 ## 📄 License
 
 This project is licensed under the Apache License 2.0 — see [LICENSE](LICENSE) for details.
