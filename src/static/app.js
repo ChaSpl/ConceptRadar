@@ -178,6 +178,7 @@
         // Remaining allScoutedIds get rose context highlight. Category siblings also get context.
         function navigateToNewNodes(allScoutedIds, trulyNewIds) {
             if (!cy) return;
+            closeDetails(); // Clear any open detail card before showing scout results
             
             // Default trulyNewIds to allScoutedIds for backward compat
             if (!trulyNewIds) trulyNewIds = allScoutedIds;
