@@ -1,0 +1,8 @@
+# ConceptRadar - Python Dependencies
+fastapi
+uvicorn[standard]
+pydantic
+google-genai
+google-adk
+mcp
+python-dotenv

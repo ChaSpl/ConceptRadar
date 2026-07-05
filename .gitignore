@@ -1,0 +1,65 @@
+# Environment variables
+.env
+
+# Databases (contain user data, not for public repo)
+*.sqlite
+*.sqlite3
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.backup*
+
+# Test DB
+TEST_DB/
+
+# Private folders (not for public repo)
+ADMIN SCRIPTS/
+BACKUP DB/
+Documentation/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+.pytest_cache/
+.venv/
+venv/
+ENV/
+
+# Temp/scratch scripts and dev tools
+scratch/
+tools/
+check_novelty.py
+batch_recalc_novelty.py
+mdpdf.log
+Google SKILLS Tutorial/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Documentation backups
+Documentation/DB Backup/
+
+# Gemini/Antigravity local config
+.gemini/
+.agents/
+
+# Task tracker (local working doc)
+task-tracker-current.md
