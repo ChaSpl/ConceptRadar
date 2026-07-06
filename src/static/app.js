@@ -1919,6 +1919,9 @@
             // Run initial check
             if (updateZoomView) updateZoomView();
 
+            // Clear suppress flag — any prior closeDetails animation was on the old cy instance
+            suppressSemanticZoom = false;
+
             // Run semantic zoom once at startup so overlapping dots separate immediately
             setTimeout(spreadNodesOnZoom, 100);
 
