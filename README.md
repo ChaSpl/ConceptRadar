@@ -129,6 +129,8 @@ Weights each of a concept's connections by taxonomic distance: cross-domain conn
 
 ## 🏗️ Architecture
 
+![ConceptRadar Architecture — Multi-agent scoring engine with MCP server, MITL consensus, and 4D scoring](./screenshots/architecture_diagram.png)
+
 ```
 ┌─────────────────────────────────────────────────────┐
 │                    Frontend                          │
