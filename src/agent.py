@@ -2,6 +2,7 @@ import sys
 import os
 import json
 import asyncio
+from pydantic import BaseModel, Field
 
 # Apply mcp monkeypatches
 import mcp
@@ -145,6 +146,22 @@ async def run_ingestion_agent(query: str, max_results: int = 5) -> list[dict]:
         await runner.close()
 
 # Contradiction Agent setup
+# Pydantic schemas for Contradiction Agent
+class ContradictionEdge(BaseModel):
+    target_id: str = Field(description="ID of the matched candidate node")
+    relationship_type: str = Field(description="The relationship type: contradicts, implements, inspired_by, extends, duplicates, cites")
+    similarity: float = Field(description="Similarity score (0.0 to 1.0)")
+    reasoning: str = Field(description="A 1-sentence explanation of this relationship")
+
+class ContradictionReport(BaseModel):
+    summary: str = Field(description="A concise 3-4 sentence summary of the concept. Do NOT copy the input text verbatim.")
+    novelty_statement: str = Field(description="A single-sentence qualitative novelty assessment.")
+    contradiction_statement: str = Field(description="A 1-2 sentence contradiction/feasibility statement.")
+    keywords: str = Field(default="", description="1-2 search keywords/phrases")
+    novelty_score: float = Field(description="Rating from 0.0 to 1.0 representing conceptual novelty.")
+    novelty_penalty: float = Field(description="Penalty from 0.0 to 1.0 (0.0 means no penalty, 1.0 means complete duplicate).")
+    edges: list[ContradictionEdge] = Field(description="Relationships to other reference concepts")
+
 async def run_contradiction_agent(new_node: dict, candidate_nodes: list[dict], max_sim: float = 0.0, base_novelty: float = 1.0, model_name: str = "gemini-2.5-flash", taxonomy_context: dict = None) -> dict:
     """
     Runs a senior research alignment agent to check if the new node contradicts, 
@@ -230,6 +247,7 @@ async def run_contradiction_agent(new_node: dict, candidate_nodes: list[dict], m
     - Does it bridge concepts across different research areas or domains?
     - Does it propose a new architectural pattern, methodology, or perspective?
     - Is it an incremental extension, or a creative recombination?
+    - A paper that connects ideas from different domains or proposes a new governance model for an emerging area is at LEAST 0.60, even if individual concepts are familiar.
     
     Scoring scale:
     - 0.0 to 0.20 (Duplicate): Direct duplicate or trivial repackaging of existing work
@@ -237,26 +255,6 @@ async def run_contradiction_agent(new_node: dict, candidate_nodes: list[dict], m
     - 0.40 to 0.60 (Moderate): Meaningful extension or application to a new domain
     - 0.60 to 0.80 (High): Novel framing, creative integration, or unique bridge across areas
     - 0.80 to 1.0 (Breakthrough): Paradigm-defining breakthrough or first-of-its-kind concept
-    
-    A paper that connects ideas from different domains or proposes a new governance model for an emerging area is at LEAST 0.60, even if individual concepts are familiar.
-    
-    Return ONLY a raw JSON object (do not include markdown code block ticks). Schema:
-    {{
-      "summary": "3-4 sentence summary of the concept.",
-      "novelty_statement": "Single sentence novelty assessment.",
-      "contradiction_statement": "1-2 sentence contradiction/feasibility assessment.",
-      "keywords": "search keywords (e.g. 'preference optimization reward model')",
-      "novelty_score": 0.0 to 1.0,
-      "novelty_penalty": 0.0 to 1.0 (0.0 means no penalty, 1.0 means complete duplicate/identical),
-      "edges": [
-         {{
-           "target_id": "ID of the matched candidate",
-           "relationship_type": "contradicts" | "implements" | "inspired_by" | "extends" | "duplicates" | "cites",
-           "similarity": 0.0 to 1.0,
-           "reasoning": "A 1-sentence explanation of this relationship"
-         }}
-      ]
-    }}
     """
     
     try:
@@ -265,19 +263,14 @@ async def run_contradiction_agent(new_node: dict, candidate_nodes: list[dict], m
                 client.models.generate_content,
                 model=model_name,
                 contents=prompt,
-                config={"response_mime_type": "application/json"}
+                config={
+                    "response_mime_type": "application/json",
+                    "response_schema": ContradictionReport
+                }
             )
         t = response.text.strip()
         if not t:
             raise ValueError("Empty text from LLM model.")
-        if "```" in t:
-            import re
-            t = re.sub(r'^```(?:json)?\s*', '', t, flags=re.MULTILINE)
-            t = re.sub(r'\s*```$', '', t, flags=re.MULTILINE)
-        t = t.strip()
-        # Clean trailing commas
-        import re
-        t = re.sub(r',(\s*[}\]])', r'\1', t)
         data = json.loads(t)
         
         # Build combined analysis report
@@ -310,6 +303,12 @@ async def run_contradiction_agent(new_node: dict, candidate_nodes: list[dict], m
             "edges": []
         }
 
+# Pydantic schema for Publisher Authority Agent
+class PublisherAuthorityReport(BaseModel):
+    is_reputable: bool = Field(description="Whether the publisher is reputable")
+    validation_score: float = Field(description="Validation score from 0.0 to 1.0")
+    reasoning: str = Field(description="Brief explanation of the assessment")
+
 async def evaluate_publisher_authority(domain: str, title: str = "", summary: str = "", path_type: str = "general") -> float:
     """Evaluates dynamic publisher authority for unknown web domains using Gemini 2.5 Flash."""
     try:
@@ -324,13 +323,6 @@ Publication Type: {path_type} (e.g. 'blog' = informal commentary/post, 'artifact
 Publication Title: {title}
 Publication Summary: {summary}
 
-Respond ONLY with a JSON object in this exact format:
-{{
-  "is_reputable": true,
-  "validation_score": 0.40,
-  "reasoning": "Brief explanation"
-}}
-
 Validation Score guidelines:
 - Peer-reviewed research papers / official standards artifacts (PDFs/whitepapers): 0.60 - 0.75
 - Official blog posts / opinion articles from recognized institutions: 0.30 - 0.45
@@ -339,7 +331,10 @@ Validation Score guidelines:
         response = client.models.generate_content(
             model="gemini-2.5-flash",
             contents=prompt,
-            config={"response_mime_type": "application/json"}
+            config={
+                "response_mime_type": "application/json",
+                "response_schema": PublisherAuthorityReport
+            }
         )
         data = json.loads(response.text.strip())
         score = float(data.get("validation_score", 0.10))

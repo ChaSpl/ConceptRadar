@@ -313,7 +313,7 @@ def blend_novelty(llm_novelty: float, node_id: str, edges: list[dict], node_topi
     
     Returns: (final_blended_score, entropy_raw, surprise_raw)
     """
-    from scoring import calculate_edge_entropy, calculate_structural_surprise
+    from .scoring import calculate_edge_entropy, calculate_structural_surprise
     
     entropy_raw = calculate_edge_entropy(node_id, edges, node_topic_map, cluster_map)
     surprise_raw = calculate_structural_surprise(node_id, edges, node_topic_map)
@@ -483,10 +483,11 @@ async def get_graph():
     node_ids = {el["data"]["id"] for el in cytoscape_elements if el["group"] == "nodes"}
 
     valid_edges = []
+    orphan_edges = []
     for e in edges:
         # Filter orphan edges: only include edges where both source and target exist
         if e["source_id"] not in node_ids or e["target_id"] not in node_ids:
-            print(f"[API] Filtering orphan edge: {e['source_id']} -> {e['target_id']}")
+            orphan_edges.append(e)
             continue
         valid_edges.append(e)
         cytoscape_elements.append({
@@ -499,6 +500,17 @@ async def get_graph():
                 "similarity": e["similarity"]
             }
         })
+
+    # Auto-heal: delete orphan edges from the database so they don't reappear
+    if orphan_edges:
+        conn = get_db_connection()
+        for oe in orphan_edges:
+            conn.execute(
+                "DELETE FROM edges WHERE source_id = ? AND target_id = ? AND relationship_type = ?",
+                (oe["source_id"], oe["target_id"], oe["relationship_type"])
+            )
+        conn.commit()
+        print(f"[API] Cleaned up {len(orphan_edges)} orphan edges from database.")
 
     # --- Reach Score Calculation ---
     # Measures taxonomic diversity of a node's connections.
