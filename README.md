@@ -131,37 +131,6 @@ Weights each of a concept's connections by taxonomic distance: cross-domain conn
 
 ![ConceptRadar Architecture — Multi-agent scoring engine with MCP server, MITL consensus, and 4D scoring](./screenshots/architecture_diagram.png)
 
-```
-┌─────────────────────────────────────────────────────┐
-│                    Frontend                          │
-│     Cytoscape.js Interactive Knowledge Graph         │
-│    (Radar View | List View | Detail Cards)           │
-└────────────────────┬────────────────────────────────┘
-                     │ REST API
-┌────────────────────▼────────────────────────────────┐
-│               FastAPI Backend                        │
-│                                                      │
-│  ┌───────────┐ ┌───────────┐ ┌──────────┐ ┌──────┐ │
-│  │ Scouting  │ │Add Source │ │  Idea    │ │ Chat │ │
-│  │ Pipeline  │ │ Pipeline  │ │ Sandbox  │ │ Bot  │ │
-│  └─────┬─────┘ └─────┬─────┘ └────┬─────┘ └──┬───┘ │
-│        │              │            │           │     │
-│  ┌─────▼──────────────▼────────────▼───────────▼──┐ │
-│  │          Multi-Agent Scoring Engine             │ │
-│  │                                                 │ │
-│  │  Novelty: LLM + Entropy + Structural Surprise   │ │
-│  │  Validation: Source credibility + citations      │ │
-│  │  Momentum: Engagement + cluster size + reach     │ │
-│  │  Reach: Taxonomic connection diversity           │ │
-│  └─────────────────────┬───────────────────────────┘ │
-│                        │                              │
-│  ┌─────────────────────▼───────────────────────────┐ │
-│  │          SQLite Knowledge Graph                  │ │
-│  │    Nodes · Edges · 3-Level Taxonomy · Metadata   │ │
-│  └──────────────────────────────────────────────────┘ │
-└──────────────────────────────────────────────────────┘
-```
-
 ### Agents & MITL (Model-in-the-Loop) Architecture
 
 ConceptRadar replaces traditional human-in-the-loop oversight with a **Model-in-the-Loop (MITL)** pattern: autonomous agents make informed decisions using LLM reasoning, with critical structural changes validated through a dual-LLM proposer+judge consensus. This enables fully autonomous operation with built-in quality assurance.
