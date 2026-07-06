@@ -2927,6 +2927,11 @@
                 });
             }
 
+            // Reset to full graph when any input field gets focus
+            document.querySelectorAll('input, textarea').forEach(field => {
+                field.addEventListener('focus', () => resetToFullMap());
+            });
+
             // Mini-Grid Quadrant Event Listeners (Registered once)
             document.querySelectorAll('.mini-quadrant').forEach(quad => {
                 quad.style.cursor = 'pointer';
