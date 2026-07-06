@@ -7,10 +7,13 @@
 
 <p align="center">
   <img src="https://img.shields.io/badge/status-beta-blue" alt="Status"/>
+  <img src="https://img.shields.io/badge/track-Agents%20for%20Good-purple" alt="Track"/>
+</p>
+<p align="center">
   <img src="https://img.shields.io/badge/license-Apache%202.0-green" alt="License"/>
   <img src="https://img.shields.io/badge/python-3.11+-yellow" alt="Python"/>
   <img src="https://img.shields.io/badge/Google%20ADK-Agent%20Framework-red" alt="ADK"/>
-  <img src="https://img.shields.io/badge/track-Agents%20for%20Good-purple" alt="Track"/>
+  <img src="https://img.shields.io/badge/built%20with-Antigravity%20by%20Google-4285F4" alt="Antigravity"/>
 </p>
 
 ---
