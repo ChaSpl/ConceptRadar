@@ -1,3 +1,19 @@
+"""
+ConceptRadar MCP Server — Tool Provider for the Ingestion Agent
+
+A FastMCP (Model Context Protocol) server that exposes two tools:
+- search_arxiv: Queries the arXiv API for research preprints, returns structured metadata
+  (title, summary, authors, publication date, PDF link).
+- search_github: Queries the GitHub Search API for repositories, returns structured metadata
+  (name, description, stars, forks, language, URL).
+
+Runs as a stdio subprocess launched by the IngestionAgent (agent.py) via ADK's McpToolset.
+The agent decides which tools to call and how to interpret results — this server only
+provides the raw search capabilities.
+
+Design decision: Uses stdlib urllib (not requests) to minimize dependencies in the
+subprocess environment. SSL verification is relaxed for local development compatibility.
+"""
 import mcp
 from mcp.types import SamplingCapability
 mcp.SamplingCapability = SamplingCapability

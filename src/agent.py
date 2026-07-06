@@ -1,3 +1,24 @@
+"""
+ConceptRadar Agent Module — Multi-Agent Architecture (ADK + MCP)
+
+Implements 8 specialized agents using Google ADK and MCP Server integration:
+- IngestionAgent: Discovers papers/repos via MCP tools (search_arxiv, search_github),
+  connected to the local FastMCP server in mcp_server.py via stdio transport.
+- ContradictionAgent: Evaluates each concept's novelty by comparing it against its
+  taxonomic peers. Uses Pydantic structured output for reliable JSON responses.
+  Receives taxonomy context (domain, area, topic, peer count) to ground its assessment.
+- ClassificationAgent: Assigns concepts to the 3-level taxonomy (domain → category → topic)
+  with nearest-neighbor embedding fallback when LLM classification fails.
+- TopicSplitAgent & DomainProposalAgent: Use MITL (Model-in-the-Loop) consensus —
+  a proposer LLM suggests changes, a judge LLM validates. No structural taxonomy
+  change passes without dual-agent agreement.
+- ParkingLotEvaluator: Re-attempts classification of quarantined concepts as taxonomy evolves.
+- FallbackReclassifier: Upgrades nearest-neighbor classifications to LLM-verified ones.
+- ChatbotAgent: Defined in chatbot.py, uses 3 skill-based tools for prompt injection safety.
+
+Design decision: MCP server runs as a subprocess via stdio (not HTTP) to keep the
+architecture self-contained — no external service dependencies for local development.
+"""
 import sys
 import os
 import json

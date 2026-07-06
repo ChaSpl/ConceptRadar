@@ -1,3 +1,18 @@
+"""
+ConceptRadar Scraper — Content Extraction & Initial Classification (Layer 0)
+
+Handles URL-to-structured-data conversion for all ingestion paths (Add Source, Scout, Refresh).
+Uses Gemini Flash to extract structured metadata from raw web content:
+- Title, summary, key concepts, document type (Layer 0 classification)
+- Handles diverse source types: arXiv papers, GitHub repos, YouTube videos, web pages
+- Special handling for arXiv (API-based metadata) and GitHub (stars/forks extraction)
+
+Design decisions:
+- Uses stdlib urllib (not requests/httpx) to keep dependencies minimal
+- HTML is cleaned and truncated to ~15K chars before LLM processing to stay within token limits
+- Structured output via Gemini's JSON response mode ensures reliable parsing
+- YouTube URLs are detected and routed to metadata-only extraction (no transcript yet)
+"""
 import re
 import os
 from datetime import datetime

@@ -1,3 +1,23 @@
+"""
+ConceptRadar Validation — Source Authority & Duplicate Detection
+
+Implements a 4-stage validation pipeline that scores source trustworthiness (0.0–1.0):
+1. Source type shortcut (arXiv → 0.80, GitHub → 0.50)
+2. Seed domain lookup with path-type differentiation (artifact vs blog vs general)
+3. SQLite cached domain scores from previous LLM evaluations
+4. Dynamic LLM publisher evaluation (Gemini Flash) — scores ≥ 0.40 are auto-cached
+
+Also provides duplicate detection via a 3-stage approach:
+1. Exact title match (case-insensitive, normalized whitespace)
+2. Embedding similarity threshold (≥ 0.93 → duplicate)
+3. LLM reranking for the ambiguous zone (0.88–0.93 similarity)
+
+Design decisions:
+- Path-type detection distinguishes /blog/ URLs from /paper/ URLs on the same domain,
+  preventing authority blogs from receiving full institutional trust scores.
+- Seed domain list is curated (20 domains) with per-path-type scores to bootstrap
+  validation before the cache builds up through organic usage.
+"""
 import urllib.parse
 
 from google import genai
