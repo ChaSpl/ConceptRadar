@@ -1476,8 +1476,12 @@
                             'line-color': function(ele) {
                                 const rel = ele.data('relationship_type');
                                 if (rel === 'contradicts') return '#ef4444';
-                                if (rel === 'implements') return '#10b981';
+                                if (rel === 'depends_on') return '#10b981';
                                 if (rel === 'extends') return '#8b5cf6';
+                                if (rel === 'applies_to') return '#f59e0b';
+                                if (rel === 'evaluates') return '#eab308';
+                                if (rel === 'part_of') return '#06b6d4';
+                                if (rel === 'similar_to') return 'rgba(255, 255, 255, 0.35)';
                                 return 'rgba(255, 255, 255, 0.15)';
                             },
                             'line-style': function(ele) {
@@ -2006,14 +2010,19 @@
                 connectedEdges.forEach(edge => {
                     const edgeData = edge.data();
                     const targetNode = cy.getElementById(edgeData.target).data();
-                    const isContradiction = edgeData.relationship_type === 'contradicts';
-                    const badgeLabel = isContradiction ? 'CONTRADICTION' : 'RELATIONSHIP';
-                    const relClass = isContradiction ? 'relation-type-contradicts' : 'relation-type-extends';
+                    const relType = edgeData.relationship_type || 'relates_to';
+                    const badgeColors = {
+                        'extends': '#8b5cf6', 'depends_on': '#10b981', 'part_of': '#06b6d4',
+                        'similar_to': '#94a3b8', 'contradicts': '#ef4444', 'applies_to': '#f59e0b',
+                        'evaluates': '#eab308', 'relates_to': '#64748b'
+                    };
+                    const badgeColor = badgeColors[relType] || '#64748b';
+                    const badgeLabel = relType.toUpperCase().replace('_', ' ');
                     
                     relationsHTML += `
                         <div class="relation-item">
                             <div class="relation-hdr">
-                                <span class="${relClass}">${badgeLabel}</span>
+                                <span style="background: ${badgeColor}22; color: ${badgeColor}; border: 1px solid ${badgeColor}55; padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.5px;">${badgeLabel}</span>
                                 <span style="color: var(--text-secondary)">Similarity: ${(edgeData.similarity * 100).toFixed(0)}%</span>
                             </div>
                             <div style="font-size: 0.75rem; color: var(--text-primary); margin-top: 3px;">

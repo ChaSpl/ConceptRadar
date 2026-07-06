@@ -128,6 +128,57 @@
                         <span>Validation (Hypothesis ➔ Reviewed)</span>
                     </div>
                 </div>
+                <!-- Edge Type Legend (collapsible) -->
+                <div style="border-top: 1px solid rgba(255, 255, 255, 0.05); margin-top: 0.4rem; padding-top: 0.4rem;">
+                    <div onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'flex' : 'none'; this.querySelector('.legend-arrow').textContent = this.nextElementSibling.style.display === 'none' ? '▸' : '▾';" 
+                         style="display: flex; align-items: center; gap: 6px; font-size: 0.7rem; color: #94a3b8; cursor: pointer; user-select: none;">
+                        <span style="font-weight: 700; color: #a78bfa; width: 45px; text-transform: uppercase;">Edges:</span>
+                        <span>Relationship Types</span>
+                        <span class="legend-arrow" style="margin-left: auto; font-size: 0.6rem;">▸</span>
+                    </div>
+                    <div style="display: none; flex-direction: column; gap: 3px; margin-top: 6px; padding-left: 4px;">
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 0.65rem;">
+                            <span style="width: 18px; height: 2px; background: #8b5cf6; display: inline-block;"></span>
+                            <span style="color: #8b5cf6;">Extends</span>
+                            <span style="color: #64748b;">— builds upon, cites</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 0.65rem;">
+                            <span style="width: 18px; height: 2px; background: #10b981; display: inline-block;"></span>
+                            <span style="color: #10b981;">Depends on</span>
+                            <span style="color: #64748b;">— implements, requires</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 0.65rem;">
+                            <span style="width: 18px; height: 2px; background: #06b6d4; display: inline-block;"></span>
+                            <span style="color: #06b6d4;">Part of</span>
+                            <span style="color: #64748b;">— subset, component</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 0.65rem;">
+                            <span style="width: 18px; height: 2px; background: rgba(255,255,255,0.35); display: inline-block;"></span>
+                            <span style="color: #94a3b8;">Similar to</span>
+                            <span style="color: #64748b;">— overlaps, aligns</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 0.65rem;">
+                            <span style="width: 18px; height: 2px; background: #ef4444; display: inline-block; border-top: 2px dashed #ef4444; height: 0;"></span>
+                            <span style="color: #ef4444;">Contradicts</span>
+                            <span style="color: #64748b;">— opposes, contrasts</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 0.65rem;">
+                            <span style="width: 18px; height: 2px; background: #f59e0b; display: inline-block;"></span>
+                            <span style="color: #f59e0b;">Applies to</span>
+                            <span style="color: #64748b;">— new domain application</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 0.65rem;">
+                            <span style="width: 18px; height: 2px; background: #eab308; display: inline-block;"></span>
+                            <span style="color: #eab308;">Evaluates</span>
+                            <span style="color: #64748b;">— benchmarks, assesses</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 6px; font-size: 0.65rem;">
+                            <span style="width: 18px; height: 2px; background: rgba(255,255,255,0.15); display: inline-block;"></span>
+                            <span style="color: #64748b;">Relates to</span>
+                            <span style="color: #64748b;">— general connection</span>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Ingest scout card -->
@@ -266,7 +317,7 @@
                     <!-- Table dynamically injected here -->
                 </div>
                 <div style="margin-top: 16px; padding: 10px 14px; font-size: 0.7rem; color: var(--text-tertiary, #6b7280); text-align: center; border-top: 1px solid rgba(255,255,255,0.06);">
-                    🔄 Database is updated every 24h — During beta phase, please be patient.
+                    🔄 Scores refresh every 24h — nodes may shift as the graph evolves. Queries can take a few minutes while agents work.
                 </div>
             </div>
 

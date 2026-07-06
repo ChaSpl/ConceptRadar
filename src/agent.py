@@ -2,6 +2,7 @@ import sys
 import os
 import json
 import asyncio
+from typing import Literal
 from pydantic import BaseModel, Field
 
 # Apply mcp monkeypatches
@@ -149,7 +150,7 @@ async def run_ingestion_agent(query: str, max_results: int = 5) -> list[dict]:
 # Pydantic schemas for Contradiction Agent
 class ContradictionEdge(BaseModel):
     target_id: str = Field(description="ID of the matched candidate node")
-    relationship_type: str = Field(description="The relationship type: contradicts, implements, inspired_by, extends, duplicates, cites")
+    relationship_type: Literal['extends', 'depends_on', 'part_of', 'similar_to', 'contradicts', 'applies_to', 'evaluates', 'relates_to'] = Field(description="The relationship type")
     similarity: float = Field(description="Similarity score (0.0 to 1.0)")
     reasoning: str = Field(description="A 1-sentence explanation of this relationship")
 
@@ -255,6 +256,16 @@ async def run_contradiction_agent(new_node: dict, candidate_nodes: list[dict], m
     - 0.40 to 0.60 (Moderate): Meaningful extension or application to a new domain
     - 0.60 to 0.80 (High): Novel framing, creative integration, or unique bridge across areas
     - 0.80 to 1.0 (Breakthrough): Paradigm-defining breakthrough or first-of-its-kind concept
+    
+    RELATIONSHIP TYPES — For each edge, classify the relationship using EXACTLY one of these types:
+    - "extends": Builds upon, cites, references, or is inspired by the reference work
+    - "depends_on": Implements, incorporates, or requires the reference as infrastructure
+    - "part_of": Is a subset, specialization, or component of the reference
+    - "similar_to": Overlaps significantly, duplicates, or closely aligns with the reference
+    - "contradicts": Opposes, contrasts with, or fundamentally disagrees with the reference
+    - "applies_to": Applies methodology or framework from the reference to a new domain
+    - "evaluates": Benchmarks, discusses, or assesses the reference work
+    - "relates_to": General thematic connection that doesn't fit the above categories
     """
     
     try:
