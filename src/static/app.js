@@ -25,7 +25,7 @@
         let savedZoomPan = null;           // Saved zoom/pan state before card opens
 
         // Display toast notification
-        function showToast(message, isGold=false, durationMs=3000) {
+        function showToast(message, isGold=false, durationMs=15000) {
             const toast = document.getElementById("toast");
             toast.innerText = message;
             if (isGold) {

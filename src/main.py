@@ -1629,6 +1629,9 @@ async def refresh_node(req: RefreshNodeRequest):
         existing_nodes = get_all_nodes()
         other_nodes = [n for n in existing_nodes if n["id"] != node_id]
         
+        # Convert sqlite3.Row to dict so .get() works
+        node = dict(node)
+        
         # Get diverse neighbors (3 same topic + 2 cross-topic)
         node_dict = {"id": node_id, "title": title, "summary": summary, "source_type": node["source_type"], "embedding": embedding, "cluster_id": node.get("cluster_id"), "is_cross_disciplinary": node.get("is_cross_disciplinary"), "tags": node.get("tags")}
         clusters = get_all_clusters()
