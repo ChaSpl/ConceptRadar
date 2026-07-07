@@ -79,6 +79,27 @@ A 3-component percentile-normalized score:
 
 All three components are percentile-normalized independently → guaranteed full [0, 1] range with no systematic skew.
 
+<details>
+<summary><strong>📈 How we got here — Novelty Model Evolution</strong></summary>
+
+The novelty scoring went through three iterations to achieve accurate concept separation:
+
+| Phase | Formula | Problem |
+|-------|---------|---------|
+| **V1** (Cosine + LLM) | `0.3 × cosine + 0.7 × LLM` | Cross-disciplinary concepts crashed (e.g., "Governance of InterAgentic AI" scored 0.26) |
+| **V2** (Entropy + LLM) | `0.4 × entropy + 0.6 × LLM` | Fixed cross-disciplinary but compressed range — 94% scored above 0.5 |
+| **V3** (3-Component) | `0.50 × LLM + 0.25 × entropy + 0.25 × surprise` | ✅ Full spectrum, healthy distribution |
+
+Key insight: adding **Structural Surprise** and **percentile-normalizing all components independently** eliminated systematic skew.
+
+| Metric | 2-component | 3-component |
+|--------|-------------|-------------|
+| Above 0.5 (Frontier) | 94% ⚠️ | 44% ✅ |
+| Score range | Compressed | Full [0, 1] |
+| Cross-disciplinary accuracy | Poor | Accurate |
+
+</details>
+
 ### How to Read the Radar — The 4 Quadrants
 
 ![Quadrant map: Known Ground (top-left), Frontier (top-right), Noise & Hype (bottom-left), Emerging Ideas (bottom-right)](./screenshots/quadrants_explained.png)
@@ -285,25 +306,6 @@ Built for the [Google x Kaggle AI Agents Intensive Course](https://www.kaggle.co
 
 ---
 
-## 📈 Novelty Model Evolution
-
-The novelty scoring went through three iterations to achieve accurate concept separation:
-
-| Phase | Formula | Problem |
-|-------|---------|---------|
-| **V1** (Cosine + LLM) | `0.3 × cosine + 0.7 × LLM` | Cross-disciplinary concepts crashed (e.g., "Governance of InterAgentic AI" scored 0.26) |
-| **V2** (Entropy + LLM) | `0.4 × entropy + 0.6 × LLM` | Fixed cross-disciplinary but compressed range — 94% scored above 0.5, making frontier/established distinction meaningless |
-| **V3** (3-Component) | `0.50 × LLM + 0.25 × entropy + 0.25 × surprise` | ✅ Full spectrum, healthy distribution |
-
-The key insight in V3: adding **Structural Surprise** (measuring how rare specific cross-topic bridges are) and **percentile-normalizing all components independently** to eliminate systematic skew.
-
-| Metric | 2-component | 3-component |
-|--------|-------------|-------------|
-| Above 0.5 (Frontier) | 94% ⚠️ | 44% ✅ |
-| Score range | Compressed | Full [0, 1] |
-| Cross-disciplinary accuracy | Poor | Accurate |
-
----
 
 ## 🛠️ Tech Stack
 
